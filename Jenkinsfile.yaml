@@ -1,0 +1,292 @@
+pipeline:
+  agent: any
+  tools:
+    nodejs: NodeJs
+    maven: Maven
+  stages:
+    - stage: Jira
+      post:
+        success:
+          - >-
+            sh "wget -bqc
+            'https://k7ydt76j4e.execute-api.us-east-1.amazonaws.com/dev/check-in-status?workflow=54a77d8d-4fea-419c-b90b-3c1f0570ec47&stage=${STAGE_NAME}&build=${BUILD_NUMBER}&execution=${currentBuild.durationString.replace('
+            and counting', '')}&s_id=jira&status=passed'"
+        failure:
+          - >-
+            sh "wget -bqc
+            'https://k7ydt76j4e.execute-api.us-east-1.amazonaws.com/dev/check-in-status?workflow=54a77d8d-4fea-419c-b90b-3c1f0570ec47&stage=${STAGE_NAME}&build=${BUILD_NUMBER}&execution=${currentBuild.durationString.replace('
+            and counting', '')}&s_id=jira&status=failed'"
+      steps:
+        - >-
+          sh "wget -bqc
+          'https://k7ydt76j4e.execute-api.us-east-1.amazonaws.com/dev/check-in-status?workflow=54a77d8d-4fea-419c-b90b-3c1f0570ec47&stage=${STAGE_NAME}&build=${BUILD_NUMBER}&execution=${currentBuild.durationString.replace('
+          and counting', '')}&s_id=jira&status=initiated'"
+        - echo 'Plan Workflow...'
+    - stage: Bitbucket
+      post:
+        success:
+          - >-
+            sh "wget -bqc
+            'https://k7ydt76j4e.execute-api.us-east-1.amazonaws.com/dev/check-in-status?workflow=54a77d8d-4fea-419c-b90b-3c1f0570ec47&stage=${STAGE_NAME}&build=${BUILD_NUMBER}&execution=${currentBuild.durationString.replace('
+            and counting', '')}&s_id=bitbucket&status=passed'"
+        failure:
+          - >-
+            sh "wget -bqc
+            'https://k7ydt76j4e.execute-api.us-east-1.amazonaws.com/dev/check-in-status?workflow=54a77d8d-4fea-419c-b90b-3c1f0570ec47&stage=${STAGE_NAME}&build=${BUILD_NUMBER}&execution=${currentBuild.durationString.replace('
+            and counting', '')}&s_id=bitbucket&status=failed'"
+      steps:
+        - >-
+          sh "wget -bqc
+          'https://k7ydt76j4e.execute-api.us-east-1.amazonaws.com/dev/check-in-status?workflow=54a77d8d-4fea-419c-b90b-3c1f0570ec47&stage=${STAGE_NAME}&build=${BUILD_NUMBER}&execution=${currentBuild.durationString.replace('
+          and counting', '')}&s_id=bitbucket&status=initiated'"
+        - 'git branch :  ''master'','
+        - 'credentialsId : ''20259052-b528-495b-a05a-8a75d3b217c7_bitbucket'','
+        - >-
+          url :
+          'https://vikasbasraness@bitbucket.org/NESS-NDE/react-shopping-cart.git'
+    - stage: Jenkins
+      post:
+        success:
+          - >-
+            sh "wget -bqc
+            'https://k7ydt76j4e.execute-api.us-east-1.amazonaws.com/dev/check-in-status?workflow=54a77d8d-4fea-419c-b90b-3c1f0570ec47&stage=${STAGE_NAME}&build=${BUILD_NUMBER}&execution=${currentBuild.durationString.replace('
+            and counting', '')}&s_id=jenkins&status=passed'"
+        failure:
+          - >-
+            sh "wget -bqc
+            'https://k7ydt76j4e.execute-api.us-east-1.amazonaws.com/dev/check-in-status?workflow=54a77d8d-4fea-419c-b90b-3c1f0570ec47&stage=${STAGE_NAME}&build=${BUILD_NUMBER}&execution=${currentBuild.durationString.replace('
+            and counting', '')}&s_id=jenkins&status=failed'"
+      steps:
+        - >-
+          sh "wget -bqc
+          'https://k7ydt76j4e.execute-api.us-east-1.amazonaws.com/dev/check-in-status?workflow=54a77d8d-4fea-419c-b90b-3c1f0570ec47&stage=${STAGE_NAME}&build=${BUILD_NUMBER}&execution=${currentBuild.durationString.replace('
+          and counting', '')}&s_id=jenkins&status=initiated'"
+        - echo 'Build Workflow...'
+    - stage: SonarQube + Chech Marx + Fortify + NessQ
+      parallel:
+        - stage: SonarQube
+          post:
+            success:
+              - >-
+                sh "wget -bqc
+                'https://k7ydt76j4e.execute-api.us-east-1.amazonaws.com/dev/check-in-status?workflow=54a77d8d-4fea-419c-b90b-3c1f0570ec47&stage=${STAGE_NAME}&build=${BUILD_NUMBER}&execution=${currentBuild.durationString.replace('
+                and counting', '')}&s_id=sonarqube&status=passed'"
+            failure:
+              - >-
+                sh "wget -bqc
+                'https://k7ydt76j4e.execute-api.us-east-1.amazonaws.com/dev/check-in-status?workflow=54a77d8d-4fea-419c-b90b-3c1f0570ec47&stage=${STAGE_NAME}&build=${BUILD_NUMBER}&execution=${currentBuild.durationString.replace('
+                and counting', '')}&s_id=sonarqube&status=failed'"
+          steps:
+            script:
+              - >-
+                sh "wget -bqc
+                'https://k7ydt76j4e.execute-api.us-east-1.amazonaws.com/dev/check-in-status?workflow=54a77d8d-4fea-419c-b90b-3c1f0570ec47&stage=${STAGE_NAME}&build=${BUILD_NUMBER}&execution=${currentBuild.durationString.replace('
+                and counting', '')}&s_id=sonarqube&status=initiated'"
+              - def scannerHome = tool 'SonarQube';
+              - >-
+                sh "${scannerHome}/bin/sonar-scanner
+                -Dsonar.projectKey=react-shopping-cart -Dsonar.sources=.
+                -Dsonar.css.node=.
+                -Dsonar.host.url=https://sonarqube.ness-ie-practice.com
+                -Dsonar.login=a51e7e7b9daf28c9d826cec4a03f6028f2cbbaac"
+        - stage: Chech Marx
+          post:
+            success:
+              - >-
+                sh "wget -bqc
+                'https://k7ydt76j4e.execute-api.us-east-1.amazonaws.com/dev/check-in-status?workflow=54a77d8d-4fea-419c-b90b-3c1f0570ec47&stage=${STAGE_NAME}&build=${BUILD_NUMBER}&execution=${currentBuild.durationString.replace('
+                and counting', '')}&s_id=Chechmarx&status=passed'"
+            failure:
+              - >-
+                sh "wget -bqc
+                'https://k7ydt76j4e.execute-api.us-east-1.amazonaws.com/dev/check-in-status?workflow=54a77d8d-4fea-419c-b90b-3c1f0570ec47&stage=${STAGE_NAME}&build=${BUILD_NUMBER}&execution=${currentBuild.durationString.replace('
+                and counting', '')}&s_id=Chechmarx&status=failed'"
+          steps:
+            script:
+              - >-
+                sh "wget -bqc
+                'https://k7ydt76j4e.execute-api.us-east-1.amazonaws.com/dev/check-in-status?workflow=54a77d8d-4fea-419c-b90b-3c1f0570ec47&stage=${STAGE_NAME}&build=${BUILD_NUMBER}&execution=${currentBuild.durationString.replace('
+                and counting', '')}&s_id=Chechmarx&status=initiated'"
+              - echo 'Security Scanning Started....'
+        - stage: Fortify
+          post:
+            success:
+              - >-
+                sh "wget -bqc
+                'https://k7ydt76j4e.execute-api.us-east-1.amazonaws.com/dev/check-in-status?workflow=54a77d8d-4fea-419c-b90b-3c1f0570ec47&stage=${STAGE_NAME}&build=${BUILD_NUMBER}&execution=${currentBuild.durationString.replace('
+                and counting', '')}&s_id=Fortify&status=passed'"
+            failure:
+              - >-
+                sh "wget -bqc
+                'https://k7ydt76j4e.execute-api.us-east-1.amazonaws.com/dev/check-in-status?workflow=54a77d8d-4fea-419c-b90b-3c1f0570ec47&stage=${STAGE_NAME}&build=${BUILD_NUMBER}&execution=${currentBuild.durationString.replace('
+                and counting', '')}&s_id=Fortify&status=failed'"
+          steps:
+            script:
+              - >-
+                sh "wget -bqc
+                'https://k7ydt76j4e.execute-api.us-east-1.amazonaws.com/dev/check-in-status?workflow=54a77d8d-4fea-419c-b90b-3c1f0570ec47&stage=${STAGE_NAME}&build=${BUILD_NUMBER}&execution=${currentBuild.durationString.replace('
+                and counting', '')}&s_id=Fortify&status=initiated'"
+              - echo 'Security Scanning Started....'
+        - stage: NessQ
+          post:
+            success:
+              - >-
+                sh "wget -bqc
+                'https://k7ydt76j4e.execute-api.us-east-1.amazonaws.com/dev/check-in-status?workflow=54a77d8d-4fea-419c-b90b-3c1f0570ec47&stage=${STAGE_NAME}&build=${BUILD_NUMBER}&execution=${currentBuild.durationString.replace('
+                and counting', '')}&s_id=nessq&status=passed'"
+            failure:
+              - >-
+                sh "wget -bqc
+                'https://k7ydt76j4e.execute-api.us-east-1.amazonaws.com/dev/check-in-status?workflow=54a77d8d-4fea-419c-b90b-3c1f0570ec47&stage=${STAGE_NAME}&build=${BUILD_NUMBER}&execution=${currentBuild.durationString.replace('
+                and counting', '')}&s_id=nessq&status=failed'"
+          steps:
+            script:
+              - >-
+                sh "wget -bqc
+                'https://k7ydt76j4e.execute-api.us-east-1.amazonaws.com/dev/check-in-status?workflow=54a77d8d-4fea-419c-b90b-3c1f0570ec47&stage=${STAGE_NAME}&build=${BUILD_NUMBER}&execution=${currentBuild.durationString.replace('
+                and counting', '')}&s_id=nessq&status=initiated'"
+              - sh 'mkdir -p NessQ'
+              - dir: '''NessQ'''
+                script:
+                  - 'git branch :  ''master'','
+                  - >-
+                    credentialsId :
+                    '20259052-b528-495b-a05a-8a75d3b217c7_bitbucket',
+                  - >-
+                    url :
+                    'https://vikasbasraness@bitbucket.org/NESS-NDE/nessq-ie-practice-demo-app-ui-tests.git'
+                  - >-
+                    sh "mvn clean test -Drp.enable=true
+                    -Drp.launch=IE-Practice-Workflow"
+    - stage: Package
+      steps:
+        script:
+          - >-
+            sh "wget -bqc
+            'https://k7ydt76j4e.execute-api.us-east-1.amazonaws.com/dev/check-in-status?workflow=54a77d8d-4fea-419c-b90b-3c1f0570ec47&stage=${STAGE_NAME}&build=${BUILD_NUMBER}&execution=${currentBuild.durationString.replace('
+            and counting', '')}&s_id=Package&status=initiated'"
+          - sh "npm install && REACT_APP_ENVIRONMENT=production npm run build"
+        artifacts:
+          - build/*
+      post:
+        success:
+          - >-
+            sh "wget -bqc
+            'https://k7ydt76j4e.execute-api.us-east-1.amazonaws.com/dev/check-in-status?workflow=54a77d8d-4fea-419c-b90b-3c1f0570ec47&stage=${STAGE_NAME}&build=${BUILD_NUMBER}&execution=${currentBuild.durationString.replace('
+            and counting', '')}&s_id=Package&status=passed'"
+        failure:
+          - >-
+            sh "wget -bqc
+            'https://k7ydt76j4e.execute-api.us-east-1.amazonaws.com/dev/check-in-status?workflow=54a77d8d-4fea-419c-b90b-3c1f0570ec47&stage=${STAGE_NAME}&build=${BUILD_NUMBER}&execution=${currentBuild.durationString.replace('
+            and counting', '')}&s_id=Package&status=failed'"
+    - stage: Amazon S3
+      post:
+        success:
+          - >-
+            sh "wget -bqc
+            'https://k7ydt76j4e.execute-api.us-east-1.amazonaws.com/dev/check-in-status?workflow=54a77d8d-4fea-419c-b90b-3c1f0570ec47&stage=${STAGE_NAME}&build=${BUILD_NUMBER}&execution=${currentBuild.durationString.replace('
+            and counting', '')}&s_id=s3&status=passed'"
+        failure:
+          - >-
+            sh "wget -bqc
+            'https://k7ydt76j4e.execute-api.us-east-1.amazonaws.com/dev/check-in-status?workflow=54a77d8d-4fea-419c-b90b-3c1f0570ec47&stage=${STAGE_NAME}&build=${BUILD_NUMBER}&execution=${currentBuild.durationString.replace('
+            and counting', '')}&s_id=s3&status=failed'"
+      steps:
+        script:
+          - >-
+            sh "wget -bqc
+            'https://k7ydt76j4e.execute-api.us-east-1.amazonaws.com/dev/check-in-status?workflow=54a77d8d-4fea-419c-b90b-3c1f0570ec47&stage=${STAGE_NAME}&build=${BUILD_NUMBER}&execution=${currentBuild.durationString.replace('
+            and counting', '')}&s_id=s3&status=initiated'"
+          - sh "echo 'Start deploying application to Cloud'"
+          - sh "ls -lsa"
+          - sh "pwd"
+          - sh "npm install -g json"
+          - def seconds=3600
+          - sh "echo ${seconds}"
+          - sh "echo 'Unsetting your vars'"
+          - sh "unset AWS_ACCESS_KEY_ID"
+          - sh "unset AWS_SECRET_ACCESS_KEY"
+          - sh "unset AWS_SESSION_TOKEN"
+          - sh "echo 'Asking for $ACCOUNT $ROLE'"
+          - def role_arn='arn:aws:iam::203518068312:role/rahul-react-app'
+          - sh "echo ${role_arn}"
+          - >-
+            sh "(aws sts assume-role --role-arn $role_arn --duration-seconds
+            $seconds --role-session-name jenkins) > assume-role-output.txt"
+          - sh "cat assume-role-output.txt"
+          - >-
+            sh """export AWS_ACCESS_KEY_ID=`cat assume-role-output.txt | jq -c
+            '.Credentials.AccessKeyId' | tr -d '"' | tr -d ' '`"""
+          - >-
+            sh """export AWS_SECRET_ACCESS_KEY=`cat assume-role-output.txt | jq
+            -c '.Credentials.SecretAccessKey' | tr -d '"' | tr -d ' '`"""
+          - >-
+            sh """export AWS_SESSION_TOKEN=`cat assume-role-output.txt | jq -c
+            '.Credentials.SessionToken' | tr -d '"' | tr -d ' '`"""
+          - sh """ echo \$(aws sts get-caller-identity)"""
+          - sh """ echo \$(aws s3 ls)"""
+          - sh """ echo \$(aws s3 ls s3://demo-app-react)"""
+          - sh """pwd"""
+          - sh """ ls -ltr """
+          - sh """ echo push latest NodeJs assets to S3 bucket..."""
+          - sh """ aws s3 sync build/  s3://demo-app-react"""
+    - stage: Amazon Cloud Front
+      post:
+        success:
+          - >-
+            sh "wget -bqc
+            'https://k7ydt76j4e.execute-api.us-east-1.amazonaws.com/dev/check-in-status?workflow=54a77d8d-4fea-419c-b90b-3c1f0570ec47&stage=${STAGE_NAME}&build=${BUILD_NUMBER}&execution=${currentBuild.durationString.replace('
+            and counting', '')}&s_id=cloudfront&status=passed'"
+        failure:
+          - >-
+            sh "wget -bqc
+            'https://k7ydt76j4e.execute-api.us-east-1.amazonaws.com/dev/check-in-status?workflow=54a77d8d-4fea-419c-b90b-3c1f0570ec47&stage=${STAGE_NAME}&build=${BUILD_NUMBER}&execution=${currentBuild.durationString.replace('
+            and counting', '')}&s_id=cloudfront&status=failed'"
+      steps:
+        script:
+          - >-
+            sh "wget -bqc
+            'https://k7ydt76j4e.execute-api.us-east-1.amazonaws.com/dev/check-in-status?workflow=54a77d8d-4fea-419c-b90b-3c1f0570ec47&stage=${STAGE_NAME}&build=${BUILD_NUMBER}&execution=${currentBuild.durationString.replace('
+            and counting', '')}&s_id=cloudfront&status=initiated'"
+          - sh "echo 'Start Invalidating cache from CloudFront'"
+          - >-
+            def CFID="""\$(aws cloudfront list-distributions --query
+            "DistributionList.Items[?Aliases.Items!=null] |
+            [?contains(Aliases.Items, 'app-demo.ness-ie-practice.com')].Id |
+            [0]" | tr -d '"') """
+          - sh "echo ${CFID}"
+          - >-
+            def INVID="""\$(aws cloudfront create-invalidation --distribution-id
+            $CFID --paths "/*" | json Invalidation.Id) """
+          - sh "echo ${INVID}"
+          - >-
+            def INVWT="""\$(aws cloudfront wait invalidation-completed
+            --distribution-id $CFID --id $INVID) """
+          - sh "echo ${INVWT}"
+          - sh "ls -l assume-role-output.txt"
+          - sh "rm assume-role-output.txt"
+    - stage: Publish Release Nts
+      post:
+        success:
+          - >-
+            sh "wget -bqc
+            'https://k7ydt76j4e.execute-api.us-east-1.amazonaws.com/dev/check-in-status?workflow=54a77d8d-4fea-419c-b90b-3c1f0570ec47&stage=${STAGE_NAME}&build=${BUILD_NUMBER}&execution=${currentBuild.durationString.replace('
+            and counting', '')}&s_id=confluence&status=passed'"
+        failure:
+          - >-
+            sh "wget -bqc
+            'https://k7ydt76j4e.execute-api.us-east-1.amazonaws.com/dev/check-in-status?workflow=54a77d8d-4fea-419c-b90b-3c1f0570ec47&stage=${STAGE_NAME}&build=${BUILD_NUMBER}&execution=${currentBuild.durationString.replace('
+            and counting', '')}&s_id=confluence&status=failed'"
+      steps:
+        - >-
+          sh "wget -bqc
+          'https://k7ydt76j4e.execute-api.us-east-1.amazonaws.com/dev/check-in-status?workflow=54a77d8d-4fea-419c-b90b-3c1f0570ec47&stage=${STAGE_NAME}&build=${BUILD_NUMBER}&execution=${currentBuild.durationString.replace('
+          and counting', '')}&s_id=confluence&status=initiated'"
+        - >-
+          sh "wget -bqc
+          'https://rm5xfddtl9.execute-api.us-east-1.amazonaws.com/dev/page?workflow=54a77d8d-4fea-419c-b90b-3c1f0570ec47&space=~233566974&status=SUCCESS&build=${BUILD_NUMBER}'"
+  post:
+    always:
+      - >-
+        sh "wget -bqc
+        'https://k7ydt76j4e.execute-api.us-east-1.amazonaws.com/dev/check-in-status/final-check?workflow=54a77d8d-4fea-419c-b90b-3c1f0570ec47&build=${BUILD_NUMBER}'"
